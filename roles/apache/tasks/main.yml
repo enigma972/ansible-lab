@@ -1,0 +1,18 @@
+# SPDX-License-Identifier: MIT-0
+---
+# tasks file for apache
+
+- name: Apache installation
+  apt:
+    name: apache2
+    state: present
+
+- name: Apache service activation
+  service:
+    name: apache2
+    state: started
+    enabled: true
+
+- name: Install php packages
+  import_tasks: php-install.yml
+  when: apache_php_install | default(false) | bool

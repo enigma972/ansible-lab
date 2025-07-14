@@ -1,0 +1,14 @@
+# MariaDB config task
+---
+- name: "Mediawiki database"
+  community.mysql.mysql_db:
+    name: "{{ commun_mediawiki_db_name }}"
+    state: present
+
+- name: "Mediawiki database user and privileges"
+  community.mysql.mysql_user:
+    name: "{{ commun_mediawiki_db_user }}"
+    password: "{{ commun_mediawiki_db_password }}"
+    priv: "{{ commun_mediawiki_db_name }}.*:ALL"
+    host: "{{ commun_mediawiki_web_host }}"
+    state: present

@@ -1,0 +1,15 @@
+---
+
+- name: Mediawiki db configuration
+  hosts: db_servers
+  gather_facts: false
+  tags: ["mariadb", "mysql"]
+  roles:
+    - role: mediawiki/confdb
+
+- name: Mediawiki apache configuration
+  hosts: apache_servers
+  gather_facts: false
+  tags: apache
+  roles:
+    - role: mediawiki/confapache

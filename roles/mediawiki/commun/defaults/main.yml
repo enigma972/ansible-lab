@@ -1,0 +1,42 @@
+---
+# Base de données
+commun_mediawiki_db_name: "mediawiki"
+
+# User et password
+commun_mediawiki_db_user: "mediawiki"
+commun_mediawiki_db_password: !vault |
+  $ANSIBLE_VAULT;1.1;AES256
+  65326666323764366265383137396338643435326331383830613165323837313331393161636331
+  3266366135666163393839346333363934306461636337380a646565636637396661306562316566
+  37333063373264306438643534333130323433333637666334313263663835336261346532336663
+  3764353562333337360a633433353463336330316532386539613264623164613732363265376263
+  6339
+
+# User admin et password
+commun_mediawiki_admin_user: "admin"
+commun_mediawiki_admin_password: !vault |
+  $ANSIBLE_VAULT;1.1;AES256
+  64646339343234646130343634633737666331316662326665396462386136343363626236366638
+  6639383539313131613434353338323964353930623434650a663534623033633463643732366335
+  34326663363836396263303163333936393138346130643964353763356563393063306433393839
+  3463393135666261360a623438613463643633666638316361633636326563663239636339346633
+  30313661373066353731373765333231366466323535623639393638623163303837
+
+# nom du Mediawiki et son titre
+commun_mediawiki_name: "mediawiki"
+commun_mediawiki_title: "Mon super mediawiki !"
+
+# Répertoire d'installation
+commun_mediawiki_directory: "/var/www/html/{{ commun_mediawiki_name }}"
+
+# Répertoire maintenance
+commun_mediawiki_maintenance_directory: "{{ commun_mediawiki_directory }}/maintenance"
+
+# Definie le premier node du groupe mariadb
+commun_mediawiki_db_host: "{{groups.db_servers.0}}"
+
+# Define the first node of the group apache
+commun_mediawiki_web_host: "{{groups.apache_servers.0}}"
+
+# l’url des sources Mediawiki
+commun_mediawiki_archive_url: "https://releases.wikimedia.org/mediawiki/1.44/mediawiki-1.44.0.zip"

@@ -1,0 +1,75 @@
+# SPDX-License-Identifier: MIT-0
+---
+# tasks file for Mediawiki ApacheConf
+
+- name: Ensure unzip is installed
+  apt:
+    name: unzip
+    state: present
+    update_cache: true
+
+- name: Ensure ubuntu user is in www-data group
+  user:
+    name: ubuntu
+    groups: www-data
+    append: true
+    state: present
+
+- name: Mediawiki directory creation
+  file:
+    path: "{{ commun_mediawiki_directory }}"
+    owner: www-data
+    group: www-data
+    mode: '0755'
+    state: directory
+
+- name: Uncompress mediawiki archive
+  unarchive:
+    src: "{{ commun_mediawiki_archive_url }}"
+    dest: "{{ commun_mediawiki_directory }}"
+    remote_src: true
+
+- name: Check if extracted directory exists
+  stat:
+    path: "{{ commun_mediawiki_directory }}/mediawiki-1.44.0"
+  register: commun_mediawiki_extracted_dir
+
+- name: Move extracted files to target directory
+  shell: |
+    shopt -s dotglob
+    mv {{ commun_mediawiki_directory }}/mediawiki-1.44.0/* {{ commun_mediawiki_directory }}/
+    rmdir {{ commun_mediawiki_directory }}/mediawiki-1.44.0
+  args:
+    removes: "{{ commun_mediawiki_directory }}/mediawiki-1.44.0"
+  when: commun_mediawiki_extracted_dir.stat.exists
+
+- name: Ensure g+w permissions on mediawiki directory
+  file:
+    path: "{{ commun_mediawiki_directory }}"
+    recurse: true
+    mode: '2775'
+
+- name: Mediawiki configuration
+  args:
+    creates: "{{ commun_mediawiki_directory }}/LocalSettings.php"
+    chdir: "{{ commun_mediawiki_maintenance_directory }}"
+  command:
+    php install.php --scriptpath /{{ commun_mediawiki_name }}
+    --dbname mediawiki --lang fr
+    --dbuser "{{ commun_mediawiki_db_user }}"
+    --dbpass "{{ commun_mediawiki_db_password }}"
+    --pass "{{ commun_mediawiki_admin_password }}"
+    --dbserver "{{ commun_mediawiki_db_host }}"
+    --server "http://{{ commun_mediawiki_web_host }}"
+  run_once: true
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups.apache_servers }}"
+
+- name: Mediawiki db update
+  command:
+    php update.php --quick
+  args:
+    chdir: "{{ commun_mediawiki_maintenance_directory }}"
+  run_once: true
+  register: resultat
+  changed_when: "' ...done.' in resultat.stdout"

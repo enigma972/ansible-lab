@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: MIT-0
+---
+
+- name: Install php packages
+  apt:
+    name: "php,php-mysql,php-xml,php-mbstring,php-gd,php-intl"
+    state: present
+    update_cache: true
+  changed_when: true
+  notify: ["Apache restart"]
