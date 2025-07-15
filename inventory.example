@@ -1,4 +1,4 @@
-[apache]
+[apache_servers]
 127.0.0.1
-[db]
+[db_servers]
 127.0.0.2
