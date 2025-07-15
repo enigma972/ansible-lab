@@ -54,13 +54,14 @@
     creates: "{{ commun_mediawiki_directory }}/LocalSettings.php"
     chdir: "{{ commun_mediawiki_maintenance_directory }}"
   command:
-    php install.php --scriptpath /{{ commun_mediawiki_name }}
-    --dbname mediawiki --lang fr
-    --dbuser "{{ commun_mediawiki_db_user }}"
-    --dbpass "{{ commun_mediawiki_db_password }}"
-    --pass "{{ commun_mediawiki_admin_password }}"
-    --dbserver "{{ commun_mediawiki_db_host }}"
-    --server "http://{{ commun_mediawiki_web_host }}"
+    php run.php  install --scriptpath /mediawiki  \
+      --dbname "{{ commun_mediawiki_db_name }}"  --lang fr \
+      --dbuser "{{ commun_mediawiki_db_user }}" \
+      --dbpass "{{ commun_mediawiki_db_password }}" \
+      --dbserver "{{ commun_mediawiki_db_host }}" \
+      --server "http://{{ commun_mediawiki_web_host }}" \
+      --pass "{{ commun_mediawiki_admin_password }}" \
+      "{{ commun_mediawiki_name }}" "{{ commun_mediawiki_admin_user }}"
   run_once: true
   delegate_to: "{{ item }}"
   with_items: "{{ groups.apache_servers }}"
